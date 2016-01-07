@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/assets/webcomponentsjs/webcomponents-lite.min.js"></script>
+<link rel="import" href="/assets/iron-form/iron-form.html">
+<link rel="import" href="/assets/iron-icon/iron-icon.html">
+<link rel="import" href="/assets/iron-icons/iron-icons.html">
+<link rel="import" href="/assets/paper-button/paper-button.html">
+<link rel="import" href="/assets/paper-card/paper-card.html">
+<link rel="import" href="/assets/paper-input/paper-input.html">
+<style is="custom-style">
+body {
+    background-color: #DCDCDC;
+    display: flex;
+    font-family: sans-serif;
+    padding: 12.5%;
+}
+paper-card.auto-center {
+    margin: 0 auto;
+    padding: 10px;
+    --paper-card-header-color: white;
+}
+paper-card::shadow div.header {
+    background-color: #00CAA1;
+    width: 350px;
+    height: 150px;
+}
+paper-button {
+    font-size: 11px;
+    float: right;
+}
+paper-button:hover {
+    background-color: rgba(0, 202, 161, 0.45);
+}
+</style>
+</head>
+
+<body>
+
+<paper-card class="auto-center" heading="Signup Form" image="http://placehold.it/350x150/20c28f" elevation=3>
+    <form is="iron-form" action="/u/{{action}}" method="post">
+        <div class="card-content">
+            <paper-input label="Username" name="username" required>
+                <iron-icon icon="mail" suffix></iron-icon>
+            </paper-input>
+            <paper-input label="Password" type="password" name="password" required>
+                <iron-icon icon="https" suffix></iron-icon>
+            </paper-input>
+            {{#moreinfo}}
+            <paper-input label="Organization" name="group" required>
+                <iron-icon icon="work" suffix></iron-icon>
+            </paper-input>
+            {{/moreinfo}}
+        </div>
+        <paper-button onclick="submitHandler(event)">{{action}}</paper-button>
+        <paper-button onclick="resetHandler(event)">clear</paper-button>
+    </form>
+</paper-card>
+
+</body>
+
+<script>
+function submitHandler(e) {
+    Polymer.dom(e).localTarget.parentElement.submit();
+}
+function resetHandler(e) {
+    Polymer.dom(e).localTarget.parentElement.reset();
+}
+document.querySelector("form").addEventListener("iron-form-response", function(e) {
+    window.location = "/";
+});
+</script>
+
+</html>
