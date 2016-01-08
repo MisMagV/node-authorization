@@ -9,7 +9,7 @@ context
     .parse(process.argv);
 
 var acct = require("../lib/model/account"),
-    password = acct.password,
+    password = require("../lib/model/password"),
     common = require("./common");
 
 Promise.all([common.setup(), password().hash(context.password)]).then(function(result) {
