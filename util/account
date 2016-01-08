@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+
+"use strict"
+
+var context = require("commander");
+
+context
+    .version("0.0.1")
+    .option("--endpoint", "Endpoint for Account database")
+    .command("create [OPTIONS]", "Create one user")
+    .command("remove [OPTIONS]", "Remove one user")
+    .command("verify [OPTIONS]", "Verify user credentials")
+    .parse(process.argv);
