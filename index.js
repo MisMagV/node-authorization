@@ -16,7 +16,7 @@ app.use("/js", express.static("html/www/js/"));
 app.set("views", "html/views/");
 
 // Register landing page router
-app.use("/", require("./lib/main").Main);
+app.use("/", require("./lib/main").Main());
 
 var server = app.listen(4040, function() {
     var host = server.address().address;
