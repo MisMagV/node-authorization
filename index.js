@@ -2,7 +2,10 @@
 
 var express = require("express");
 
-var app = require("./lib/app");
+var app = require("./lib/app").app,
+    app_event = require("./lib/app").app_event;
+
+app_event.on("ready", function() {
 
 // Setup components assets
 app.use("/assets", express.static("html/bower_components/"));
@@ -23,3 +26,5 @@ var server = app.listen(4040, function() {
     var port = server.address().port;
     console.log('Example app listening at http://%s:%s', host, port);
 });
+
+}); // end of app initialization trigger

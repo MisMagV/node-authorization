@@ -42,17 +42,18 @@ paper-button:hover {
     <form is="iron-form" action="/u/{{action}}" method="post">
         <input type="hidden" name="_csrf" value="{{{csrfToken}}}">
         <div class="card-content">
-            <paper-input label="Username" name="username" required>
+            <!-- TODO: show error info -->
+            <paper-input label="Username" name="iden" required>
                 <iron-icon icon="mail" suffix></iron-icon>
             </paper-input>
-            <paper-input label="Password" type="password" name="password" required>
+            <paper-input label="Password" type="password" name="passwd" required>
                 <iron-icon icon="https" suffix></iron-icon>
             </paper-input>
-            {{#moreinfo}}
+            {{#more_info}}
             <paper-input label="Organization" name="group" required>
                 <iron-icon icon="work" suffix></iron-icon>
             </paper-input>
-            {{/moreinfo}}
+            {{/more_info}}
         </div>
         <paper-button onclick="submitHandler(event)">{{action}}</paper-button>
         <paper-button onclick="resetHandler(event)">clear</paper-button>
@@ -68,8 +69,14 @@ function submitHandler(e) {
 function resetHandler(e) {
     Polymer.dom(e).localTarget.parentElement.reset();
 }
-document.querySelector("form").addEventListener("iron-form-response", function(e) {
+
+var form = document.querySelector("form");
+form.addEventListener("iron-form-response", function() {
     window.location = "/";
+});
+form.addEventListener("iron-form-error", function() {
+    alert("Bad Username or Password");
+    form.reset();
 });
 </script>
 
