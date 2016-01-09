@@ -12,7 +12,7 @@ var acct = require("../lib/model/account"),
     password = require("../lib/model/password"),
     common = require("./common");
 
-Promise.all([common.setup(), password().hash(context.password)]).then(function(result) {
+Promise.all([common.setup(), password.crypt().hash(context.password)]).then(function(result) {
     var db = result[0], secret = result[1];
     var Account = acct.build(db);
     var user = new Account({
