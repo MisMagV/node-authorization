@@ -5,7 +5,7 @@ var express = require("express");
 var app = require("./lib/app").app,
     app_event = require("./lib/app").app_event;
 
-app_event.on("ready", function() {
+app_event.once("ready", function() {
 
 // Setup components assets
 app.use("/assets", express.static("html/bower_components/"));
