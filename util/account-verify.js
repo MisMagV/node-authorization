@@ -7,7 +7,7 @@ context
     .option("-p, --password [password]", "Password")
     .parse(process.argv);
 
-var acct = require("../lib/model/account"),
+var acct = require("../lib/mongo_model/account"),
     common = require("./common");
 
 common.setup().then(function(db) {

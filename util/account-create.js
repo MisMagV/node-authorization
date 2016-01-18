@@ -8,8 +8,8 @@ context
     .option("-p, --password [password]", "Password to use for this user")
     .parse(process.argv);
 
-var acct = require("../lib/model/account"),
-    password = require("../lib/model/password"),
+var acct = require("../lib/mongo_model/account"),
+    password = require("../lib/mongo_model/password"),
     common = require("./common");
 
 Promise.all([common.setup(), password.crypt().hash(context.password)]).then(function(result) {
