@@ -13,6 +13,8 @@
     "cookie-parser": "^1.4.0",
     "csurf": "^1.8.3",
     "express": "^4.13.3",
+    "ioredis": "^1.14.0",
+    "mathjs": "^2.6.0",
     "moment": "^2.11.0",
     "mongoose": "^4.3.4",
     "mustache-express": "^1.2.2",
