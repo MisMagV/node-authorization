@@ -16,8 +16,9 @@ Promise.all([common.setup(), password.crypt().hash(context.password)]).then(func
     var db = result[0], secret = result[1];
     var Account = acct.build(db);
     var user = new Account({
+        joinedAt: new Date(),
         iden: context.username,
-        hash: secret
+        hash: secret,
     });
     return user.save();
 })
