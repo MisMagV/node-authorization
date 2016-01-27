@@ -13,6 +13,7 @@
     "bin": "./util"
   },
   "dependencies": {
+    "aws-sdk": "^2.2.32",
     "aws-sdk-promise": "file:../aws-sdk-promise",
     "body-parser": "^1.14.2",
     "commander": "^2.9.0",

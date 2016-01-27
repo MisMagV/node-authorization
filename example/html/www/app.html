@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="/assets/webcomponentsjs/webcomponents-lite.min.js"></script>
+<link rel="import" href="/assets/paper-button/paper-button.html">
+<link rel="import" href="/assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="/assets/paper-toast/paper-toast.html">
+<link rel="import" href="/assets/iron-ajax/iron-ajax.html">
+</head>
+<body>
+<div>You are using the App NOW</div>
+<paper-button raised id="GET" onclick="handler(event)">
+    GET<iron-ajax method="GET" url="/v/32i94348yoiewru9we8"></iron-ajax>
+</paper-button>
+<paper-button raised id="POST" onclick="handler(event)">
+    POST<iron-ajax method="POST" url="/v/32i94348yoiewru9we8"></iron-ajax>
+</paper-button>
+<paper-dialog>
+    <h2>Download Link</h2>
+    <div><a id="link" href="" download>Save Object</a></div>
+</paper-dialog>
+<paper-toast duration=1500></paper-toast>
+<div style="display:none;"><input type="file" id="upload" onchange="putfile(event)"></div>
+</body>
+
+<script>
+function handler(e) {
+    if (e.target.id === "POST") {
+        putfile.trigger = Polymer.dom(e).localTarget.firstElementChild;
+        document.querySelector("input").click();
+    } else {
+        Polymer.dom(e).localTarget.firstElementChild.generateRequest();
+    }
+}
+
+function putfile(event) {
+    if (putfile.trigger) {
+        putfile.trigger.generateRequest();
+        putfile.trigger = null;
+    }
+    event.preventDefault();
+}
+
+var toast = document.querySelector("paper-toast");
+
+var dialog = document.querySelector("paper-dialog"),
+    link = dialog.querySelector("#link");
+
+link.addEventListener("click", function(e) {
+    dialog.close(); // bye bye
+});
+
+function process(data) {
+    if (data.method === "GET") {
+        link.href = data.url;
+        dialog.open();
+    } else {
+        debugger; 
+    }
+}
+
+var iron = document.querySelectorAll("iron-ajax");
+for (var idx = 0; idx < iron.length; idx++) {
+    var i = iron[idx];
+    i.addEventListener("response", function(e) {
+        process(e.detail.response);
+    });
+    i.addEventListener("error", function(e) {
+        toast.text = "GRRRRRR no permission!";
+        toast.show();
+    });
+}
+</script>
+
+</html>
