@@ -9,7 +9,7 @@ context
     .parse(process.argv);
 
 var acct = require("../lib/mongo_model/account"),
-    password = require("../lib/mongo_model/password"),
+    password = require("../lib/password"),
     common = require("./common");
 
 Promise.all([common.setup(), password.crypt().hash(context.password)]).then(function(result) {
