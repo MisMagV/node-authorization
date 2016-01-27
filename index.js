@@ -1,25 +1,15 @@
 "use strict"
 
-var express = require("express");
+module.exports = {
+    app: require("./lib/app").app,
 
-var app = require("./lib/app").app;
+    bodyParser: require("body-parser"),
 
-// Setup components assets
-app.use("/assets", express.static("html/bower_components/"));
-app.use("/assets", express.static("html/custom_components/"));
+    cookieParser: require("cookie-parser"),
 
-// Setup static assets
-app.use("/css", express.static("html/www/css/"));
-app.use("/js", express.static("html/www/js/"));
+    csurf: require("csurf"),
 
-// Setup dynamic view repostitory
-app.set("views", "html/views/");
+    express: require("express"),
 
-// Register landing page router
-app.use("/", require("./lib/main").Main());
-
-var server = app.listen(4040, function() {
-    var host = server.address().address;
-    var port = server.address().port;
-    console.log('Example app listening at http://%s:%s', host, port);
-});
+    main: require("./lib/main"),
+};
