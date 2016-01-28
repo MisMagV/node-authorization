@@ -6,6 +6,7 @@
 <link rel="import" href="/assets/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="/assets/paper-button/paper-button.html">
 <link rel="import" href="/assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="/assets/paper-spinner/paper-spinner-lite.html">
 <link rel="import" href="/assets/paper-styles/paper-styles.html">
 <link rel="import" href="/assets/paper-toast/paper-toast.html">
 <link rel="import" href="/assets/iron-ajax/iron-ajax.html">
@@ -29,6 +30,9 @@ paper-button[id="POST"] {
         color: white !important;
     };
 }
+paper-spinner-lite[id="going"] {
+    visibility: hidden;
+}
 </style>
 </head>
 <body>
@@ -40,6 +44,7 @@ paper-button[id="POST"] {
 <paper-button raised noink id="POST" onclick="handler(event)">
     POST<iron-ajax method="POST" url="/v/32i94348yoiewru9we8"></iron-ajax>
 </paper-button>
+<paper-spinner-lite active id="going"></paper-spinner-lite>
 <paper-dialog>
     <h2>Download Link</h2>
     <div><a id="link" href="" download>Save Object</a></div>
@@ -54,6 +59,7 @@ var toast = document.querySelector("paper-toast"),
     dialog = document.querySelector("paper-dialog"),
     link = dialog.querySelector("#link"),
     file = document.querySelector("#file");
+    going = document.querySelector("#going");
 
 link.addEventListener("click", function(e) {
     dialog.close(); // bye bye
@@ -94,13 +100,16 @@ function process(data) {
         Object.assign(req, data);
         req.body = file.files[0];
         req.addEventListener("response", function(e) {
+            going.style.visibility = "hidden";
             toast.text = "Yeah I send this stuff...";
             toast.show();
         });
         req.addEventListener("error", function(e) {
+            going.style.visibility = "hidden";
             toast.text = "Err " + e.detail.request.status;
             toast.show();
         });
+        going.style.visibility = "visible";
         req.generateRequest();
         file.value = "";
     } else {
