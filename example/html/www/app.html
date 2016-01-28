@@ -3,28 +3,74 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="/assets/webcomponentsjs/webcomponents-lite.min.js"></script>
+<link rel="import" href="/assets/iron-flex-layout/classes/iron-flex-layout.html">
 <link rel="import" href="/assets/paper-button/paper-button.html">
 <link rel="import" href="/assets/paper-dialog/paper-dialog.html">
+<link rel="import" href="/assets/paper-styles/paper-styles.html">
 <link rel="import" href="/assets/paper-toast/paper-toast.html">
 <link rel="import" href="/assets/iron-ajax/iron-ajax.html">
+<style is="custom-style">
+paper-button {
+    font-family: sans-serif;
+    margin: 0 32px;
+}
+paper-button[id="GET"] {
+    background-color: var(--paper-indigo-500);
+    color: white;
+    --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+    };
+}
+paper-button[id="POST"] {
+    color: var(--paper-pink-a200);
+    --paper-button-raised-keyboard-focus: {
+        background-color: var(--paper-pink-a200) !important;
+        color: white !important;
+    };
+}
+</style>
 </head>
 <body>
 <div>You are using the App NOW</div>
-<paper-button raised id="GET" onclick="handler(event)">
+<div class="layout horizontal center" style="height:128px;">
+<paper-button raised noink id="GET" onclick="handler(event)">
     GET<iron-ajax method="GET" url="/v/32i94348yoiewru9we8"></iron-ajax>
 </paper-button>
-<paper-button raised id="POST" onclick="handler(event)">
+<paper-button raised noink id="POST" onclick="handler(event)">
     POST<iron-ajax method="POST" url="/v/32i94348yoiewru9we8"></iron-ajax>
 </paper-button>
 <paper-dialog>
     <h2>Download Link</h2>
     <div><a id="link" href="" download>Save Object</a></div>
 </paper-dialog>
+</div>
 <paper-toast duration=1500></paper-toast>
-<div style="display:none;"><input type="file" id="upload" onchange="putfile(event)"></div>
+<div style="display:none;"><input type="file" id="file" onchange="putfile(event)"></div>
 </body>
 
 <script>
+var toast = document.querySelector("paper-toast"),
+    dialog = document.querySelector("paper-dialog"),
+    link = dialog.querySelector("#link"),
+    file = document.querySelector("#file");
+
+link.addEventListener("click", function(e) {
+    dialog.close(); // bye bye
+});
+
+var iron = document.querySelectorAll("iron-ajax");
+for (var idx = 0; idx < iron.length; idx++) {
+    var i = iron[idx];
+    i.addEventListener("response", function(e) {
+        process(e.detail.response);
+    });
+    i.addEventListener("error", function(e) {
+        toast.text = "Grr " + e.detail.request.status;
+        toast.show();
+    });
+}
+
 function handler(e) {
     if (e.target.id === "POST") {
         putfile.trigger = Polymer.dom(e).localTarget.firstElementChild;
@@ -35,41 +81,31 @@ function handler(e) {
 }
 
 function putfile(event) {
-    if (putfile.trigger) {
-        putfile.trigger.generateRequest();
-        putfile.trigger = null;
-    }
-    event.preventDefault();
+    putfile.trigger.params = { type: file.files[0].type || "" };
+    putfile.trigger.generateRequest();
 }
-
-var toast = document.querySelector("paper-toast");
-
-var dialog = document.querySelector("paper-dialog"),
-    link = dialog.querySelector("#link");
-
-link.addEventListener("click", function(e) {
-    dialog.close(); // bye bye
-});
 
 function process(data) {
     if (data.method === "GET") {
         link.href = data.url;
         dialog.open();
+    } else if (data.method === "PUT") {
+        var req = document.createElement("iron-ajax");
+        Object.assign(req, data);
+        req.body = file.files[0];
+        req.addEventListener("response", function(e) {
+            toast.text = "Yeah I send this stuff...";
+            toast.show();
+        });
+        req.addEventListener("error", function(e) {
+            toast.text = "Err " + e.detail.request.status;
+            toast.show();
+        });
+        req.generateRequest();
+        file.value = "";
     } else {
-        debugger; 
+        debugger; // ugh, why am i here?
     }
-}
-
-var iron = document.querySelectorAll("iron-ajax");
-for (var idx = 0; idx < iron.length; idx++) {
-    var i = iron[idx];
-    i.addEventListener("response", function(e) {
-        process(e.detail.response);
-    });
-    i.addEventListener("error", function(e) {
-        toast.text = "GRRRRRR no permission!";
-        toast.show();
-    });
 }
 </script>
 

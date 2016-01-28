@@ -25,7 +25,7 @@ var csrfProtection = csurf({cookie: true}),
     parseForm = bodyParser.urlencoded({ extended: false });
 
 API.param("iden_resource", function(req, res, next, id) {
-    req.params = {
+    req.s3req = {
         Bucket: "devops.magv.com",
         Key: path.join(req.auth._id.valueOf(), id),
         Expires: 300,
@@ -47,19 +47,19 @@ API.route("/:iden_resource")
     .get(function(req, res) {
         var data = {
             method: "GET",
-            url: req.s3.getSignedUrl("getObject", req.params),
+            url: req.s3.getSignedUrl("getObject", req.s3req),
         };
         res.json(data);
     })
     .post(parseForm, function(req, res) {
-        Object.assign(req.params, {
+        Object.assign(req.s3req, {
             StorageClass: "REDUCED_REDUNDANCY",
-            ContentType: "x-mz-custom/blob"
+            ContentType: req.query.type || "x-mz-custom/blob"
         });
         var data = {
             method: "PUT",
-            contentType: req.params.ContentType,
-            url: req.s3.getSignedUrl("putObject", req.params),
+            contentType: req.s3req.ContentType,
+            url: req.s3.getSignedUrl("putObject", req.s3req),
         };
         res.json(data);
     });
