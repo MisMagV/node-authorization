@@ -10,4 +10,5 @@ context
     .command("create [OPTIONS]", "Create one user")
     .command("remove [OPTIONS]", "Remove one user")
     .command("verify [OPTIONS]", "Verify user credentials")
+    .command("reset [OPTIONS]", "Reset user credentials")
     .parse(process.argv);
