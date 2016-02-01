@@ -3,10 +3,10 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="/assets/webcomponentsjs/webcomponents-lite.min.js"></script>
-<link rel="import" href="/assets/iron-flex-layout/classes/iron-flex-layout.html">
-<link rel="import" href="/assets/iron-form/iron-form.html">
 <link rel="import" href="/assets/iron-icon/iron-icon.html">
 <link rel="import" href="/assets/iron-icons/iron-icons.html">
+<link rel="import" href="/assets/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="/assets/iron-form/iron-form.html">
 <link rel="import" href="/assets/paper-button/paper-button.html">
 <link rel="import" href="/assets/paper-card/paper-card.html">
 <link rel="import" href="/assets/paper-input/paper-input.html">
@@ -15,7 +15,7 @@ body {
     background-color: #DCDCDC;
     font-family: sans-serif;
 }
-paper-card.auto-center {
+paper-card {
     margin: 0 auto;
     padding: 10px;
     --paper-card-header-color: white;
@@ -25,10 +25,8 @@ paper-card::shadow div.header {
     width: 350px;
     height: 150px;
 }
-paper-card a {
-    font-size: 11px;
-    position: absolute;
-    top: 12px;
+paper-card {
+    --paper-card-header-color: white;
 }
 paper-button {
     font-size: 11px;
@@ -41,27 +39,17 @@ paper-button:hover {
 </head>
 
 <body class="layout vertical fullbleed center-center">
-<paper-card class="auto-center" heading="Signup Form" image="http://placehold.it/350x150/20c28f" elevation=3>
+<paper-card heading="Login Help" image="http://placehold.it/350x150/20c28f" elevation=1>
     <div class="card-content">
-        <form is="iron-form" action="/u/{{action}}" method="post">
+        <form is="iron-form" action="/u/login_help" method="post">
             <input type="hidden" name="_csrf" value="{{{csrfToken}}}">
-            <paper-input label="Username" name="iden" id="iden" required>
+            <paper-input label="Username" name="iden" value="{{{iden}}}" required>
                 <iron-icon icon="mail" suffix></iron-icon>
             </paper-input>
-            <paper-input label="Password" type="password" name="passwd" required>
-                <iron-icon icon="https" suffix></iron-icon>
-            </paper-input>
-            {{#more_info}}
-            <paper-input label="Organization" name="group" required>
-                <iron-icon icon="work" suffix></iron-icon>
-            </paper-input>
-            {{/more_info}}
         </form>
     </div>
     <div class="card-actions">
-        <paper-button onclick="submitHandler(event)">{{action}}</paper-button>
-        <paper-button onclick="resetHandler(event)">clear</paper-button>
-        <a href="" onclick="loginHelper(event)">Need help Login?</a>
+        <paper-button onclick="submitHandler(event)">reset password</paper-button>
     </div>
 </paper-card>
 </body>
@@ -70,46 +58,27 @@ paper-button:hover {
 var form = document.querySelector("form");
 form.addEventListener("iron-form-response", function(e) {
     switch (e.detail.status) {
-    case 200:
-        window.location = "/";
-        break;
-    case 204:
-        alert("You already had an account with us");
-        window.location = "/u/login";
-        break;
     case 205:
         alert("You had signed up before, need to resend confirm link?");
-        form.reset();
+        break;
+    default:
+        alert("Reset link is on its way");
         break;
     }
 });
 form.addEventListener("iron-form-error", function(e) {
     switch (e.detail.request.status) {
-    case 403:
-        alert("Unable to Authenticate user");
-        break;
     case 404:
-        alert("You don't have an account with us?  Signup?");
-        window.location = "/u/signup";
+        alert("You don't have an account with us?");
         break;
     default:
         alert("Something went wrong");
         break;
     }
-    form.reset();
 });
 
 function submitHandler(e) {
     form.submit();
-}
-
-function resetHandler(e) {
-    form.reset();
-}
-
-function loginHelper(e) {
-    var iden = document.querySelector("#iden");
-    document.querySelector("a").href="/u/login_help?iden=" + iden.value;
 }
 
 </script>
