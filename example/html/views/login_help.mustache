@@ -39,17 +39,22 @@ paper-button:hover {
 </head>
 
 <body class="layout vertical fullbleed center-center">
-<paper-card heading="Login Help" image="http://placehold.it/350x150/20c28f" elevation=1>
+<paper-card heading="{{banner_title}}" image="http://placehold.it/350x150/20c28f" elevation=1>
     <div class="card-content">
-        <form is="iron-form" action="/u/login_help" method="post">
+        <form is="iron-form" action="/u/login_help{{#confirm_token}}/{{{confirm_token}}}/confirm{{/confirm_token}}" method="post">
             <input type="hidden" name="_csrf" value="{{{csrfToken}}}">
             <paper-input label="Username" name="iden" value="{{{iden}}}" required>
                 <iron-icon icon="mail" suffix></iron-icon>
             </paper-input>
+            {{#reset}}
+            <paper-input label="Password" type="password" name="passwd" required>
+                <iron-icon icon="https" suffix></iron-icon>
+            </paper-input>
+            {{/reset}}
         </form>
     </div>
     <div class="card-actions">
-        <paper-button onclick="submitHandler(event)">reset password</paper-button>
+        <paper-button onclick="submitHandler(event)">{{action}}</paper-button>
     </div>
 </paper-card>
 </body>
@@ -62,7 +67,8 @@ form.addEventListener("iron-form-response", function(e) {
         alert("You had signed up before, need to resend confirm link?");
         break;
     default:
-        alert("Reset link is on its way");
+        alert("{{{message}}}");
+        window.location = "/u/login";
         break;
     }
 });
