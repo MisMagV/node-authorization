@@ -1,0 +1,33 @@
+{
+  "name": "node-authorization",
+  "version": "0.0.1",
+  "description": "Authorization Module and API service",
+  "main": "index.js",
+  "directories": {
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffjen/node-login.git"
+  },
+  "author": "Jeffrey Jen <yihungjen@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jeffjen/node-login/issues"
+  },
+  "homepage": "https://github.com/jeffjen/node-login#readme",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "commander": "^2.9.0",
+    "express": "^4.13.4",
+    "jsonwebtoken": "^5.7.0",
+    "moment": "^2.12.0",
+    "mongoose": "^4.4.11",
+    "multer": "^1.1.0",
+    "password-hash-and-salt": "^0.1.3",
+    "promise": "^7.1.1"
+  }
+}
