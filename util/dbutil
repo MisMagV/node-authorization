@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+var context = require("commander");
+
+context
+    .version("0.0.1")
+    .command("index", "Manage index on collection")
+    .command("account", "User account management")
+    .parse(process.argv);

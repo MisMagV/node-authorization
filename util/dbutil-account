@@ -5,9 +5,8 @@
 var context = require("commander");
 
 context
-    .version("0.0.1")
-    .command("create-index", "Create necessary index for collection")
     .command("create [OPTIONS]", "Create one user")
     .command("remove [OPTIONS]", "Remove one user")
     .command("verify [OPTIONS]", "Verify user credentials")
+    .command("confirm [OPTIONS]", "Confirm user signup")
     .parse(process.argv);

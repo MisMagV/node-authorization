@@ -1,0 +1,9 @@
+#!/usr/bin/env node
+
+"use strict"
+
+var context = require("commander");
+
+context
+    .command("create [OPTIONS]", "Create index on collection")
+    .parse(process.argv);
