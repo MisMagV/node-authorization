@@ -2,7 +2,6 @@
 
 var express = require("express");
 var app = express();
-var api_version = require("./api_version");
 
 /* BEGIN Setup application server */
 // Use qs module to parse query string
@@ -26,29 +25,27 @@ app.get("/status", function status(req, res) {
 });
 
 // Application version
-app.use("/v1", api_version("v1"));
+app.use("/v1", require("./api/v1"));
 /* END Setup application server */
 
 /* BEGIN register Data Model */
-var model = require("./model/");
-
-// DEBUG: Log query commands to mongodb
-model.set("debug", true);
-
 // FIXME: obtain Mongodb connection URI from ENV or arg
 const mongo_uri = "mongodb://localhost/account";
-var db_conn = new model.Connection(mongo_uri);
+const conn = require("node-mongoose-connect");
+const model = require("./model/v1");
 
+// DEBUG: Log query commands to mongodb
+conn.mongoose.set("debug", true);
+
+var db_conn = new conn.Connection(mongo_uri);
 db_conn.on("mongoose::err", function mongoose_err(error) {
     // Error connecting to mongodb
     console.log(error);
 });
-
 db_conn.on("mongoose::conn", function mongoose_conn(conn) {
     // Setup global constructs upon db connection
-    var Model = model.Model("v1");
-    for (var m in Model) {
-        app.locals[m] = Model[m].build(conn);
+    for (var m in model) {
+        app.locals[m] = model[m].build(conn);
     }
 });
 /* END register Data Model */

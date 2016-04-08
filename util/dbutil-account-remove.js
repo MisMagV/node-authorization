@@ -6,12 +6,12 @@ context
     .option("-u, --username [username]", "User to remove")
     .parse(process.argv);
 
-const Model = require("../model/").Model("v1");
+const model = require("../model/v1");
 
 const common = require("./common");
 
 common.setup().then(function(db) {
-    var Account = Model.account.build(db);
+    var Account = model.account.build(db);
     return Account.remove({ alias: context.username }, 1).exec();
 })
 .then(function(ret) {

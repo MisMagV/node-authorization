@@ -1,5 +1,5 @@
 "use strict"
 
-module.exports.Model = {
+module.exports = {
     account: require("./account"),
 }

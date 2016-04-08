@@ -8,7 +8,7 @@ var Login = express.Router();
 module.exports = Login;
 
 const api = require("./api_common");
-const ERR = require("../lib/error");
+const ERR = require("../../lib/error");
 
 Login.post("/",
     parseUrlEncoded,

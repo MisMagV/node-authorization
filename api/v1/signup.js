@@ -8,8 +8,8 @@ var Signup = express.Router();
 module.exports = Signup;
 
 const api = require("./api_common");
-const ERR = require("../lib/error");
-const password = require("../lib/password");
+const ERR = require("../../lib/error");
+const password = require("../../lib/password");
 
 Signup.post("/",
     parseUrlEncoded,

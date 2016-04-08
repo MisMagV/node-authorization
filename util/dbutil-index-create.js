@@ -7,14 +7,14 @@ context
     .option("-c, --collection [collection]", "Collection to create index")
     .parse(process.argv);
 
-const Model = require("../model/").Model("v1");
+const model = require("../model/v1");
 
 const common = require("./common");
 
 common.setup()
     .then(function ensureIndexes(db) {
-        if (context.collection in Model) {
-            var m = Model[context.collection].build(db);
+        if (context.collection in model) {
+            var m = model[context.collection].build(db);
             return m.ensureIndexes();
         } else {
             throw new Error("collection " + context.collection + " not defined");

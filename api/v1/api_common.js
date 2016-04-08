@@ -1,6 +1,6 @@
 "use strict"
 
-const jwt = require("../lib/jwt");
+const jwt = require("../../lib/jwt");
 
 module.exports.send_jwt_token = function send_jwt_token(payload_fn) {
     function _send_jwt_token(req, res) {

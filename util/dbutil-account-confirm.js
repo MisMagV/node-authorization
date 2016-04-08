@@ -7,13 +7,13 @@ context
     .option("-u, --username [username]", "Username to confirm")
     .parse(process.argv);
 
-const Model = require("../model/").Model("v1");
+const model = require("../model/v1");
 
 const common = require("./common");
 
 common.setup()
     .then(function pre_confirm(db) {
-        var Account = Model.account.build(db);
+        var Account = model.account.build(db);
         return Account.update({ alias: context.username }, {
             $set: {
                 expire_at: null,
