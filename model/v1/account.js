@@ -1,10 +1,10 @@
 "use strict"
 
-var mongoose = require("mongoose"),
-    moment = require("moment"),
-    Promise = require("promise");
+const mongoose = require("mongoose");
+const moment = require("moment");
+const Promise = require("promise");
 
-var password = require("../../lib/password");
+const password = require("../../lib/password");
 
 const duration = moment.duration(1, "d").asSeconds();
 
@@ -60,6 +60,13 @@ accountSchema.methods.enc_groups = function enc_groups() {
     return this.groups.join(";");
 }
 
-module.exports.build = function(context) {
-    return context.model("account", accountSchema);
-};
+function account() {
+    this.model = null;
+}
+
+account.prototype.build = function build(db) {
+    this.model = db.model("account", accountSchema)
+    return this.model;
+}
+
+module.exports = new account();

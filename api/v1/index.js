@@ -1,13 +1,13 @@
 "use strict"
 
-var express = require("express");
+const express = require("express");
+const api = module.exports= express.Router();
 
-var api = express.Router();
-module.exports = api;
+const model = require("../../model/v1");
 
 api.use(function register_klass(req, res, next) {
     // pre load account module;
-    req.account = req.app.locals.account;
+    req.account = model.account.model;
     req.jwt_options = req.app.locals.jwt_options;
     next();
 });

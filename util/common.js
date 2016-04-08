@@ -1,6 +1,6 @@
 "use strict"
 
-var Promise = require("promise");
+const Promise = require("promise");
 
 const conn = require("node-mongoose-connect");
 

@@ -45,7 +45,7 @@ db_conn.on("mongoose::err", function mongoose_err(error) {
 db_conn.on("mongoose::conn", function mongoose_conn(conn) {
     // Setup global constructs upon db connection
     for (var m in model) {
-        app.locals[m] = model[m].build(conn);
+        model[m].build(conn);
     }
 });
 /* END register Data Model */
