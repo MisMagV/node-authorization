@@ -40,10 +40,11 @@ conn.mongoose.set("debug", true);
 var db_conn = new conn.Connection(mongo_uri);
 db_conn.on("mongoose::err", function mongoose_err(error) {
     // Error connecting to mongodb
-    console.log(error);
+    console.error("mongodb:", "error:", error);
 });
 db_conn.on("mongoose::conn", function mongoose_conn(conn) {
     // Setup global constructs upon db connection
+    console.error("mongodb:", "connected");
     for (var m in model) {
         model[m].build(conn);
     }

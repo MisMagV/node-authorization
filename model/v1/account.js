@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const moment = require("moment");
 const Promise = require("promise");
 
+const ServerError = require("../../lib/errors/server-error");
+const UserNotfoundError = require("../../lib/errors/user-not-found-error");
+
 const password = require("../../lib/password");
 
 const duration = moment.duration(1, "d").asSeconds();
@@ -34,7 +37,7 @@ accountSchema.static.createIndexes = function ensureIndexes() {
     function _index(ok, grr) {
         _this.ensureIndexes(function (err) {
             if (err) {
-                grr(err);
+                grr(new ServerError(err));
             } else {
                 ok();
             }
@@ -43,11 +46,22 @@ accountSchema.static.createIndexes = function ensureIndexes() {
     return new Promise(_index);
 }
 
+accountSchema.static.findAndVerify = function findAndVerify(cred) {
+    return this.findOne({ alias: cred.name })
+        .exec()
+        .then(function candidate(user) {
+            if (!user) {
+                throw new UserNotfoundError();
+            } else {
+                return user.verify(cred.pass);
+            }
+        });
+}
+
 accountSchema.methods.verify = function verify(token) {
     var _this = this;
     return password.crypt().verify(token, _this.hash)
         .then(function() {
-            console.log("verify: ok");
             return _this;
         });
 }
