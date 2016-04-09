@@ -1,24 +1,48 @@
 "use strict"
 
 const basicauth = require("basic-auth");
+const bodyparser = require("body-parser");
+const cookieparser = require("cookie-parser");
+const csrf = require('csurf');
 const express = require("express");
 const mongoose = require("mongoose");
 
 const APICore = require("../../lib/core");
-const tokenModel = require("../../lib/token-model");
 
 const PendingUserConfirmError = require("../../lib/errors/pending-user-confirm-error");
 const UnauthorizedRequestError = require("../../lib/errors/unauthorized-request-error");
 const UserNotfoundError = require("../../lib/errors/user-not-found-error");
 const ServerError = require("../../lib/errors/server-error");
+const StandardHttpError = require("standard-http-error");
 
-const core = new APICore();
 const dbModel = require("../../model/v1");
 
 const Login = module.exports = express.Router();
 
-Login.post("/",
-    function find_and_verify(req, res, next) {
+const core = new APICore({ model: require("../../lib/token-model") });
+const csrfProtection = csrf({ cookie: true });
+const parseJSON = bodyparser.json();
+
+Login.use(cookieparser());
+
+Login.get("/form", csrfProtection, function login_form(req, res) {
+    res.render("login-form", {
+        endpoint: "/v1/login",
+        csrfToken: req.csrfToken(),
+        label_name: "Login Name",
+        label_pass: "Password",
+        action: "login",
+        extra: {
+            resume: req.query.resume
+        }
+    });
+});
+
+Login.route("/")
+    .get(function login_page(req, res) {
+        res.sendFile("login.html", { root: "views" });
+    })
+    .post(parseJSON, csrfProtection, function find_and_verify(req, res, next) {
         var cred = basicauth(req);
         if (!cred) {
             next(new UnauthorizedRequestError("missing Authorization"));
@@ -42,15 +66,18 @@ Login.post("/",
             .catch(function error(err) {
                 next(new ServerError(err));
             });
-    },
-    core.authorize(tokenModel),
-    function send_login_token(req, res) {
-        res.status(200).end(req.token);
-    }
-);
+    }, core.authorize(), function send_login_token(req, res, next) {
+        if (req.token) {
+            res.status(200).end(req.token);
+        } else {
+            next(new UnauthorizedRequestError());
+        }
+    })
 
 Login.use(function error_handle(err, req, res, next) {
-    if (err instanceof ServerError) {
+    if (!(err instanceof StandardHttpError)) {
+        next(err);
+    } else if (err instanceof ServerError) {
         next(err);
     } else {
         console.error("login:", "error:", err);

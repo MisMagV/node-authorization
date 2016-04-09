@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>User Authentication</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="assets/bower_components/webcomponentsjs/webcomponents.min.js""></script>
+<link rel="import" href="assets/bower_components/iron-flex-layout/iron-flex-layout.html">
+<style is="custom-style">
+body {
+    @apply(--layout-horizontal);
+    @apply(--layout-fullbleed);
+    @apply(--layout-center-justified);
+}
+div.container {
+    width: 50vw;
+    height: 50vh;
+    margin-top: 25vh;
+}
+</style>
+</head>
+<body>
+<div class="container">
+</div>
+</body>
+<script>
+Polymer.Base.importHref("login/form", function (e) {
+    var form = document.createElement("login-form");
+    var container = document.querySelector("div.container");
+    container.appendChild(form);
+}, function (err) {
+    debugger;
+});
+</script>
+</html>

@@ -1,0 +1,57 @@
+<link rel="import" href="../assets/bower_components/iron-form/iron-form.html">
+<link rel="import" href="../assets/bower_components/paper-button/paper-button.html">
+<link rel="import" href="../assets/bower_components/paper-input/paper-input.html">
+<link rel="import" href="../assets/bower_components/paper-styles/color.html">
+<link rel="import" href="../assets/bower_components/paper-styles/shadow.html">
+<link rel="import" href="../assets/bower_components/paper-styles/typography.html">
+
+<dom-module id="login-form">
+<template>
+<style is="custom-style">
+form {
+    padding: 2vh 5vw;
+    @apply(--shadow-elevation-3dp);
+}
+paper-button {
+    margin: 0;
+    margin-top: 2vh;
+
+    background-color: var(--paper-indigo-500);
+    color: white;
+    @apply(--paper-font-body1);
+}
+</style>
+
+<form is="iron-form" id="form" method="post" content-type="application/json" action="{{{ endpoint }}}"
+    on-iron-form-presubmit="preflight"
+    on-iron-form-submit="postflight"
+    >
+    <input type="hidden" name="_csrf" value="{{ csrfToken }}"></input>
+    <paper-input required name="name" label="{{ label_name }}"></paper-input>
+    <paper-input required name="pass" label="{{ label_pass }}" type="password"></paper-input>
+    <paper-button id="submit" raised on-click="submit">{{ action }}</paper-button>
+</form>
+</template>
+<script>
+Polymer({
+    is: "login-form",
+    submit: function submit(e) {
+        this.$.form.submit();
+    },
+    preflight: function preflight(e) {
+        var json = this.$.form.request.body;
+        var name = json.name;
+        delete json.name;
+        var pass = json.pass;
+        delete json.pass;
+        this.$.form.request.body = json;
+        this.$.form.request.headers = {
+            Authorization: "Basic " + btoa(name + ":" + pass),
+        };
+    },
+    postflight: function postflight(e) {
+        debugger;
+    },
+});
+</script>
+</dom-module>
