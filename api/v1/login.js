@@ -4,68 +4,56 @@ const basicauth = require("basic-auth");
 const express = require("express");
 const mongoose = require("mongoose");
 
-var Login = express.Router();
-module.exports = Login;
+const APICore = require("../../lib/core");
+const tokenModel = require("../../lib/token-model");
 
-const InvalidPasswordError = require("../../lib/errors/invalid-password-error");
-const UnauthorizedRequestError = require("../../lib/errors/unauthorized-request-error");
 const PendingUserConfirmError = require("../../lib/errors/pending-user-confirm-error");
-const ServerError = require("../../lib/errors/server-error");
+const UnauthorizedRequestError = require("../../lib/errors/unauthorized-request-error");
 const UserNotfoundError = require("../../lib/errors/user-not-found-error");
+const ServerError = require("../../lib/errors/server-error");
 
-const api = require("./api_common");
+const core = new APICore();
+const dbModel = require("../../model/v1");
+
+const Login = module.exports = express.Router();
 
 Login.post("/",
-    function findUser(req, res, next) {
+    function find_and_verify(req, res, next) {
         var cred = basicauth(req);
         if (!cred) {
-            throw new UnauthorizedRequestError("missing Authorization");
+            next(new UnauthorizedRequestError("missing Authorization"));
+            return;
         }
         // Find this user in our system
-        req.account.findOne({alias: cred.name})
-            .exec()
+        dbModel.model("account")
+            .findAndVerify(cred)
             .then(function candidate(accnt) {
-                if (accnt === null) {
-                    next(new UserNotfoundError());
-                    return;
-                }
                 if (accnt.joined_at === undefined) {
                     next(new PendingUserConfirmError());
-                    return;
+                } else {
+                    req.user = accnt;
+                    next();
                 }
-                return accnt.verify(cred.pass);
             })
-            .then(function verified(accnt) {
-                req.user = accnt;
-                next();
+            .catch(UnauthorizedRequestError, function unauthorized(e) {
+                res.set("WWW-Authenticate", 'Basic realm="Service"');
+                next(e);
             })
             .catch(function error(err) {
-                if (err instanceof InvalidPasswordError) {
-                    next(err);
-                } else if (err instanceof UnauthorizedRequestError) {
-                    next(err);
-                } else {
-                    next(new ServerError(err));
-                }
+                next(new ServerError(err));
             });
     },
-    api.send_jwt_token(function payload_fn(req) {
-        return {
-            data : {
-                groups: req.user.enc_groups(),
-                rights: req.user.enc_rights(),
-            },
-        };
-    })
+    core.authorize(tokenModel),
+    function send_login_token(req, res) {
+        res.status(200).end(req.token);
+    }
 );
 
 Login.use(function error_handle(err, req, res, next) {
     if (err instanceof ServerError) {
         next(err);
     } else {
-        if (err instanceof UnauthorizedRequestError) {
-            res.set("WWW-Authenticate", 'Basic realm="Service"');
-        }
+        console.error("login:", "error:", err);
         res.status(err.code).send(err.message);
     }
 });

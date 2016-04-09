@@ -31,7 +31,6 @@
     "multer": "^1.1.0",
     "node-mongoose-connect": "git+https://github.com/jeffjen/node-mongoose-connect.git",
     "password-hash-and-salt": "^0.1.3",
-    "promise": "^7.1.1",
     "standard-http-error": "^2.0.0"
   }
 }
