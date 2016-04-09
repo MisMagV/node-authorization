@@ -3,22 +3,16 @@
 const mongoose = require("mongoose");
 
 var clientSchema = mongoose.Schema({
-    client_secret: String,
+    client_hash: String,
     grants: [String],
     redirectUris: [String],
+    salt: String,
 });
 
 clientSchema.virtual("client_id").get(function getClientId() {
     return this._id.toHexString();
 });
 
-function client() {
-    this.model = null;
+module.exports = function build(db) {
+    return db.model("client", clientSchema);
 }
-
-client.prototype.build = function build(db) {
-    this.model = db.model("client", clientSchema);
-    return this.model;
-}
-
-module.exports = new client();

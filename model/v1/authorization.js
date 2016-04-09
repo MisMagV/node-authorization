@@ -15,13 +15,6 @@ authorizationSchema.virtual("scopes").set(function setScopes(scopes) {
     this.scope = scopes.split(" "); 
 });
 
-function authorization() {
-    this.model = null;
+module.exports = function build(db) {
+    return db.model("authorization", authorizationSchema);
 }
-
-authorization.prototype.build = function build(db) {
-    this.model = db.model("authorization", authorizationSchema);
-    return this.model;
-}
-
-module.exports = new authorization();

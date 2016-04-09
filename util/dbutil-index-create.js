@@ -1,20 +1,24 @@
 "use strict"
 
-var context = require("commander"),
-    Promise = require("promise");
+var context = require("commander");
 
 context
     .option("-c, --collection [collection]", "Collection to create index")
     .parse(process.argv);
 
-const model = require("../model/v1");
+if (!context.collection) {
+    console.error("Missing required argument: collection");
+    process.exit(1);
+}
+
+const dbModel = require("../model/v1");
 
 const common = require("./common");
 
 common.setup()
     .then(function ensureIndexes(db) {
-        if (context.collection in model) {
-            var m = model[context.collection].build(db);
+        var m = dbModel.model(context.collection);
+        if (m) {
             return m.ensureIndexes();
         } else {
             throw new Error("collection " + context.collection + " not defined");

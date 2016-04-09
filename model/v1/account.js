@@ -2,7 +2,7 @@
 
 const mongoose = require("mongoose");
 const moment = require("moment");
-const Promise = require("promise");
+const Promise = require("bluebird");
 
 const ServerError = require("../../lib/errors/server-error");
 const UserNotfoundError = require("../../lib/errors/user-not-found-error");
@@ -32,21 +32,7 @@ var accountSchema = mongoose.Schema({
     },
 });
 
-accountSchema.static.createIndexes = function ensureIndexes() {
-    var _this = this;
-    function _index(ok, grr) {
-        _this.ensureIndexes(function (err) {
-            if (err) {
-                grr(new ServerError(err));
-            } else {
-                ok();
-            }
-        });
-    }
-    return new Promise(_index);
-}
-
-accountSchema.static.findAndVerify = function findAndVerify(cred) {
+accountSchema.statics.findAndVerify = function findAndVerify(cred) {
     return this.findOne({ alias: cred.name })
         .exec()
         .then(function candidate(user) {
@@ -56,6 +42,10 @@ accountSchema.static.findAndVerify = function findAndVerify(cred) {
                 return user.verify(cred.pass);
             }
         });
+}
+
+accountSchema.statics.findByName = function findByName(name) {
+    return this.findOne({ alias: name }).exec();
 }
 
 accountSchema.methods.verify = function verify(token) {
@@ -74,13 +64,6 @@ accountSchema.methods.enc_groups = function enc_groups() {
     return this.groups.join(";");
 }
 
-function account() {
-    this.model = null;
+module.exports = function build(db) {
+    return db.model("account", accountSchema);
 }
-
-account.prototype.build = function build(db) {
-    this.model = db.model("account", accountSchema)
-    return this.model;
-}
-
-module.exports = new account();

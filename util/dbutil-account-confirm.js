@@ -1,19 +1,18 @@
 "use strict"
 
-var context = require("commander"),
-    Promise = require("promise");
+var context = require("commander");
 
 context
     .option("-u, --username [username]", "Username to confirm")
     .parse(process.argv);
 
-const model = require("../model/v1");
+const dbModel = require("../model/v1");
 
 const common = require("./common");
 
 common.setup()
-    .then(function pre_confirm(db) {
-        var Account = model.account.build(db);
+    .then(function pre_confirm() {
+        var Account = dbModel.model("account");
         return Account.update({ alias: context.username }, {
             $set: {
                 expire_at: null,

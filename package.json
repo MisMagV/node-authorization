@@ -21,6 +21,7 @@
   "homepage": "https://github.com/jeffjen/node-login#readme",
   "dependencies": {
     "basic-auth": "^1.0.3",
+    "bluebird": "^3.3.4",
     "body-parser": "^1.15.0",
     "commander": "^2.9.0",
     "express": "^4.13.4",
