@@ -32,15 +32,17 @@ Login.get("/form", csrfProtection, function login_form(req, res) {
         label_name: "Login Name",
         label_pass: "Password",
         action: "login",
-        extra: {
-            resume: req.query.resume
-        }
     });
 });
 
 Login.route("/")
-    .get(function login_page(req, res) {
-        res.sendFile("login.html", { root: "views" });
+    .get(core.is_visitor(), function login_page(req, res) {
+        if (req.is_visitor) {
+            res.sendFile("login.html", { root: "views" });
+        } else {
+            const redirect_url = req.query.resume || "profile";
+            res.redirect(302, redirect_url);
+        }
     })
     .post(parseJSON, csrfProtection, function find_and_verify(req, res, next) {
         var cred = basicauth(req);
@@ -48,7 +50,6 @@ Login.route("/")
             next(new UnauthorizedRequestError("missing Authorization"));
             return;
         }
-        // Find this user in our system
         dbModel.model("account")
             .findAndVerify(cred)
             .then(function candidate(accnt) {

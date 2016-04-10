@@ -27,5 +27,8 @@ build/Release
 node_modules
 bower_components
 
+# Built bundle
+bundle.js
+
 # vim tmp file
 *.sw*

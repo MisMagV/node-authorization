@@ -6,6 +6,9 @@ const app = express();
 const mustacheExpress = require("mustache-express");
 
 /* BEGIN Setup application server */
+// FIXME: obtain Authorized Domain from ENV or arg
+app.locals.authorized_domain = "";
+
 // Use qs module to parse query string
 app.set("query parser", "extended");
 

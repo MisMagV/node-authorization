@@ -4,32 +4,137 @@
 <title>User Authentication</title>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script src="assets/bower_components/webcomponentsjs/webcomponents.min.js""></script>
+<script src="assets/bower_components/webcomponentsjs/webcomponents.min.js"></script>
 <link rel="import" href="assets/bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="assets/bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="assets/bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="assets/bower_components/paper-styles/shadow.html">
+<link rel="import" href="assets/bower_components/paper-styles/typography.html">
 <style is="custom-style">
 body {
     @apply(--layout-horizontal);
-    @apply(--layout-fullbleed);
     @apply(--layout-center-justified);
 }
+a:link {
+    text-decoration: none;
+}
+
+a:visited {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:active {
+    text-decoration: underline;
+}
 div.container {
-    width: 50vw;
-    height: 50vh;
-    margin-top: 25vh;
+    @apply(--layout-vertical);
+}
+div.container > .login-header {
+    @apply(--layout-vertical);
+    @apply(--layout-center-center);
+    height: 102px;
+
+    @apply(--paper-font-display1);
+    text-transform: uppercase;
+}
+div.container > .login-note {
+    @apply(--layout-vertical);
+    @apply(--layout-center-center);
+    min-height: 102px;
+    margin-bottom: 24px;
+
+    @apply(--paper-font-common-base);
+    text-align: center;
+}
+div.container > .login-note h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+
+    color: #555;
+    font-size: 42px;
+    font-weight: 300;
+}
+div.container > .login-note h2 {
+    margin: 0;
+
+    color: #555;
+    font-size: 18px;
+    font-weight: 400;
+}
+div.container > .login-card {
+    max-width: 274px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 40px;
+
+    border-radius: 5px;
+    background-color: rgba(250, 250, 250, 1);
+    @apply(--shadow-elevation-3dp);
+}
+div.container > .login-card .profile-wrapper {
+    @apply(--layout-horizontal);
+    @apply(--layout-center-justified);
+}
+div.container > .login-card .profile-wrapper iron-icon.profile {
+    --iron-icon-fill-color: rgba(200, 200, 200, 1);
+    --iron-icon-height: 120px;
+    --iron-icon-width: 120px;
+}
+div.container > .login-card .help-wrapper {
+    float: right;
+    margin-top: 15px;
+
+    @apply(--paper-font-body1);
+    text-decoration: none;
+}
+div.container > .signup {
+    @apply(--layout-vertical);
+    @apply(--layout-center-center);
+    padding-top: 27px;
+
+    @apply(--paper-font-body1);
+    text-decoration: none;
 }
 </style>
+<link rel="import" href="login/form"> <!-- import login form -->
 </head>
 <body>
 <div class="container">
+    <div class="login-header">Lost</div>
+    <div class="login-note">
+        <h1>A Stranger. From Foreign Land.</h1>
+        <h2>Go and Login</h2>
+    </div>
+    <div class="login-card">
+        <div class="profile-wrapper">
+            <iron-icon id="profile" class="profile" icon="account-circle"></iron-icon>
+        </div>
+        <login-form id="form"></login-form>
+        <div class="help-wrapper">
+            <a class="help" href="singup">Need Help?</a>
+        </div>
+    </div>
+    <div class="signup">
+        <a href="signup">Create An Account</a>
+    </div>
 </div>
 </body>
+<script src="assets/bundle.js"></script>
 <script>
-Polymer.Base.importHref("login/form", function (e) {
-    var form = document.createElement("login-form");
-    var container = document.querySelector("div.container");
-    container.appendChild(form);
-}, function (err) {
-    debugger;
-});
+var app = require("app");
+
+app.$$("#form")
+    .on("form-accept", function accept(ev) {
+        var token = ev.detail;
+        app.process(token);
+    })
+    .on("form-reject", function reject(ev) {
+        var err = ev.detail;
+        console.error("form-accept:", err);
+    });
 </script>
 </html>
